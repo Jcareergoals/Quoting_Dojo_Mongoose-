@@ -22,26 +22,29 @@ mongoose.model('Quote', quoteSchema);
 var Quote = mongoose.model('Quote'); 
 
 app.get('/', function(req, res){
-	// console.log('working');
 	res.render('index');
 }); 
 app.get('/main', function(req, res){
-	res.render('main');
+	Quote.find({}, function(err, users){
+		if(err){
+			console.log(err);
+			res.redirect('/');
+		} else {
+			res.render('main', {users:users});
+		}
+	});
 }); 
 app.post('/quotes', function(req, res){
-	console.log("POST DATA:");
-	console.log(req.body);
-	
 	var userQuote = new Quote({
 		name: req.body.name, 
 		quote: req.body.quote, 
 		date: new Date
 	}); 
-	userQuote.save(function(err, user){
+	userQuote.save(function(err){
 		if(err){
 			console.log(err);
 		} else {
-			console.log(user);
+			console.log("Quote was successfully entered into the database!"); 
 			res.redirect('/main'); 
 		}
 	}); 
